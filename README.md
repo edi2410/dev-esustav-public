@@ -1,55 +1,253 @@
 # eSustav
 
-## Backend
+Sustav za upravljanje studentskom organizacijom.
 
-(potrebno imati [python](https://www.python.org/downloads/) i [pip](https://www.geeksforgeeks.org/how-to-install-pip-on-windows/))
-Pozicionirat se u backend folder:
+## Sadržaj
+- [Preduvjeti](#preduvjeti)
+- [Lokalno Pokretanje](#lokalno-pokretanje)
+  - [Backend](#backend)
+  - [Frontend](#frontend)
+- [Docker Pokretanje](#docker-pokretanje)
+- [Dokumentacija](#dokumentacija)
 
-`cd backend`
+---
 
-Kreiranje python virtualnog env za aplikaciju ([docs](https://docs.python.org/3/tutorial/venv.html)):
+## Preduvjeti
 
-`python -m venv env `
+### Za lokalni razvoj
+- [Python 3.10+](https://www.python.org/downloads/)
+- [pip](https://pip.pypa.io/en/stable/installation/)
+- [Node.js 18+](https://nodejs.org/en/download/)
+- [PostgreSQL](https://www.postgresql.org/download/) (ili SQLite za razvoj)
 
-Ulazak u environment:
+### Za Docker
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-windows: `./env/scripts/activate`
-mac: `source ./env/bin/activate`
+---
 
-Instaliranje requirements-a
+## Lokalno Pokretanje
 
-`pip install -r requirements.txt`
+### Backend
 
-Kreairanje migracija i pokretanje migracija da bi se kreirala baza. (Lokalna baza je podignuta na repo. Ovaj korak možda neće imat nekog efekta):
+1. **Pozicioniraj se u backend folder:**
+   ```bash
+   cd backend
+   ```
 
-`python manage.py makemigrations`
-`python manage.py migrate`
+2. **Kreiraj virtualni environment:**
+   ```bash
+   python -m venv env
+   ```
 
-Kreiranje superusera za pristup admin pagu:
+3. **Aktiviraj environment:**
 
-`python manage.py createsuperuser`
+   **Windows:**
+   ```bash
+   .\env\Scripts\activate
+   ```
 
-Pokretanje localnog servera:
+   **macOS/Linux:**
+   ```bash
+   source ./env/bin/activate
+   ```
 
-`python manage.py runserver`
+4. **Instaliraj dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Frontend 
+5. **Konfiguriraj .env datoteku:**
 
-(potrebno imati instaliran [NodeJs](https://nodejs.org/en/download/current))
+   Kreiraj ili uredi `backend/.env`:
+   ```env
+   DEBUG=True
+   SECRET_KEY=your-secret-key-here
 
-Pozicioniranje u frontend folder
+   # Google OAuth
+   GOOGLE_SCOPE_ID=your-google-client-id
+   GOOGLE_SECRET=your-google-secret
 
-`cd frontend`
+   # Database (lokalno)
+   DATABASE_NAME=esustav
+   DATABASE_USER=admin
+   DATABASE_PASSWORD=your-password
+   DATABASE_HOST=localhost
+   DATABASE_PORT=5432
+   ```
 
-Instalirati requirements:
+6. **Pokreni migracije:**
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
 
-`npm install`
+7. **Kreiraj superuser-a (opcionalno):**
+   ```bash
+   python manage.py createsuperuser
+   ```
 
-Pokretanje lokalnog servera:
+8. **Pokreni razvojni server:**
+   ```bash
+   python manage.py runserver
+   ```
 
-`npm start`
+   Backend je dostupan na: `http://localhost:8000`
 
+### Frontend
 
-Ulazak u bazu "psql -U {dbname}"
+1. **Pozicioniraj se u frontend folder:**
+   ```bash
+   cd frontend
+   ```
 
-"tesdf"
+2. **Instaliraj dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Konfiguriraj .env datoteku:**
+
+   Kreiraj ili uredi `frontend/.env`:
+   ```env
+   VITE_GOOGLE_CLIENT_ID=your-google-client-id
+   ```
+
+4. **Pokreni razvojni server:**
+   ```bash
+   npm start
+   ```
+
+   Frontend je dostupan na: `http://localhost:5173`
+
+---
+
+## Docker Pokretanje
+
+### Brzi start
+
+1. **Konfiguriraj environment varijable:**
+
+   Uredi `.env` u root folderu:
+   ```env
+   # Database
+   POSTGRES_DB_HOST=esustav_db
+   POSTGRES_DB=esustav
+   POSTGRES_USER=admin
+   POSTGRES_PASSWORD=your-secure-password
+   POSTGRES_PORT=5432
+   ```
+
+   Uredi `backend/.env`:
+   ```env
+   DEBUG=False
+   SECRET_KEY=your-production-secret-key
+
+   GOOGLE_SCOPE_ID=your-google-client-id
+   GOOGLE_SECRET=your-google-secret
+
+   DATABASE_NAME=esustav
+   DATABASE_USER=admin
+   DATABASE_PASSWORD=your-secure-password
+   DATABASE_HOST=esustav_db
+   DATABASE_PORT=5432
+
+   CACHES_URL=esustav_memcached:11211
+   ```
+
+2. **Pokreni sve servise:**
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Pristup aplikaciji:**
+   - Aplikacija: `http://localhost:8700`
+   - API: `http://localhost:8700/api`
+
+### Docker Servisi
+
+| Servis | Opis | Port |
+|--------|------|------|
+| `esustav_nginx` | Nginx reverse proxy | 8700 |
+| `esustav_api` | Django backend | 8000 (interno) |
+| `esustav_fe` | React frontend | 5173 (interno) |
+| `esustav_db` | PostgreSQL baza | 5432 (interno) |
+
+### Docker Naredbe
+
+```bash
+# Pokretanje u pozadini
+docker-compose up -d
+
+# Zaustavljanje servisa
+docker-compose down
+
+# Rebuild nakon promjena
+docker-compose up --build
+
+# Pregled logova
+docker-compose logs -f
+
+# Pregled logova specifičnog servisa
+docker-compose logs -f esustav_api
+
+# Pristup bazi
+docker exec -it esustav_db psql -U admin -d esustav
+
+# Pokretanje migracija ručno
+docker exec -it esustav_api python manage.py migrate
+
+# Kreiranje superuser-a u Dockeru
+docker exec -it esustav_api python manage.py createsuperuser
+```
+
+### Struktura Docker Compose
+
+```
+docker-compose.yaml
+├── esustav_nginx     # Reverse proxy (port 8700)
+│   └── depends_on: esustav_fe, esustav_db
+├── esustav_api       # Django backend
+│   └── depends_on: esustav_db
+├── esustav_fe        # React frontend
+└── esustav_db        # PostgreSQL
+```
+
+---
+
+## Dokumentacija
+
+- [Podatkovni Model](docs/PODATKOVNI_MODEL.md) - Detaljni opis arhitekture podataka (backend)
+- [Frontend Arhitektura](docs/FRONTEND_ARHITEKTURA.md) - Arhitektura i struktura frontenda
+- [Uloge i Dozvole](docs/ULOGE_I_DOZVOLE.md) - Sustav uloga i permisija
+- [Environment Varijable](docs/ENV_VARIJABLE.md) - Konfiguracija environment varijabli
+- [Lokalna Baza](docs/LOKALNA_BAZA.md) - Docker PostgreSQL setup i SQL import
+- [Vodič za Doprinos](CONTRIBUTING.md) - Upute za nove developere
+
+---
+
+## Razvoj
+
+### Struktura Projekta
+
+```
+esustav/
+├── backend/                 # Django backend
+│   ├── estudenti/          # Glavni modul - korisnici i uloge
+│   ├── eaktivnosti/        # Modul aktivnosti
+│   ├── einfo/              # Info i certifikati
+│   ├── eizbori/            # Izbori
+│   ├── epartneri/          # Partneri
+│   ├── suprach/            # Peer review
+│   ├── logs/               # Logging
+│   └── settings/           # Django konfiguracija
+├── frontend/               # React frontend
+├── nginx/                  # Nginx konfiguracija
+├── docs/                   # Dokumentacija
+└── docker-compose.yaml     # Docker Compose konfiguracija
+```
+
+### Korisni Linkovi
+
+- Django Admin: `http://localhost:8000/admin` (lokalno) ili `http://localhost:8700/admin` (Docker)
+- API Dokumentacija: `http://localhost:8000/api/` (lokalno) ili `http://localhost:8700/api` (Docker)
