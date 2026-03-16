@@ -66,16 +66,23 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Create CI .env for Django
+        working-directory: backend
+        run: |
+          cat > .env <<EOF
+          DEBUG=True
+          SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY || 'ci-placeholder-secret-key-not-used-in-prod' }}
+          GOOGLE_SCOPE_ID=ci-placeholder
+          DATABASE_NAME=esustav
+          DATABASE_USER=admin
+          DATABASE_PASSWORD=placeholder
+          DATABASE_HOST=localhost
+          DATABASE_PORT=5432
+          EOF
+
       - name: Django system check
-        run: python manage.py check
-        env:
-          DEBUG: "True"
-          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-          DATABASE_NAME: esustav
-          DATABASE_USER: admin
-          DATABASE_PASSWORD: placeholder
-          DATABASE_HOST: localhost
-          DATABASE_PORT: "5432"
+        working-directory: backend
+        run: python manage.py check --skip-checks database
 
   # ── Docker ──────────────────────────────────────────────────────────────────
   docker-build:
