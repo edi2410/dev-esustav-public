@@ -67,7 +67,6 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Create CI .env for Django
-        working-directory: backend
         run: |
           cat > .env <<EOF
           DEBUG=True
@@ -81,8 +80,7 @@ jobs:
           EOF
 
       - name: Django system check
-        working-directory: backend
-        run: python manage.py check --skip-checks database
+        run: python manage.py check
 
   # ── Docker ──────────────────────────────────────────────────────────────────
   docker-build:
