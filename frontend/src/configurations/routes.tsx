@@ -13,7 +13,7 @@ import { CommentUserPage } from "pages/suprach/CommentUserPage";
 import { UsersWhoNotFillPage } from "pages/suprach/UsersWhoNotFillPage";
 interface Routes {
   path: string;
-  element: JSX.Element;
+  element: React.ReactElement;
   key: string;
 }
 export const routes: Routes[] = [

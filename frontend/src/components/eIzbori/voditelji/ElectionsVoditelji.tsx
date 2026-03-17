@@ -2,7 +2,7 @@ import React, { Suspense, useState } from "react";
 import { CandidateType } from "types";
 import { Button, Flex, Modal, Spin, Tooltip, Typography } from "antd";
 import { useGetCandidateLeader } from "hooks/eizbori-hooks/useGetCandidateLeader";
-import { Candidate, VotesForm, VotesFormVoditelji } from "@components";
+import { Candidate, VotesFormVoditelji } from "@components";
 import { useGetIsVoted } from "hooks/eizbori-hooks/useGetIsVoted";
 import { Elections } from "types/VotesTypes";
 

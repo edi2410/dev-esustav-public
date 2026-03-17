@@ -137,7 +137,7 @@ const PartnerDetailsPage = () => {
                                 />
                               </Suspense>,
                               <Suspense fallback={<Spin size="small" />}>
-                                <DeleteNotesButton notesID={note?.id} />
+                                <DeleteNotesButton notesID={note.id} />
                               </Suspense>,
                             ]}
                           >
