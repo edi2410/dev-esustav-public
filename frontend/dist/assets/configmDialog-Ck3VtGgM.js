@@ -1,0 +1,1 @@
+import{M as o}from"./index-CHH_7KZw.js";const{confirm:a}=o,s=(t,e)=>{a({title:"Da li ste sigurni da želite obrisati aktivnost?",okText:"Da",okType:"danger",cancelText:"Ne",onOk(){e.mutate(t)}})};export{s};

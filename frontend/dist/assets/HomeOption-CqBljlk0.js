@@ -1,0 +1,1 @@
+import{r as o,R as t,c as s}from"./index-B89JxAsN.js";const c=({image:r,onClick:n})=>{const e=o.useRef(window.innerWidth);return t.createElement("div",{className:" homeOption",onClick:n,style:{cursor:"pointer"}},t.createElement(s,{src:r,width:e.current<480?e.current-40:480,preview:!1}))};export{c as default};

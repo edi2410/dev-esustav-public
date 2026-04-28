@@ -1,0 +1,1 @@
+import{e as o,f as r,s}from"./index-B89JxAsN.js";const n=()=>{const e=o();return r(["is_voted_data"],async()=>{try{const{data:t}=await e.get("eizbori/elections/votes/is-voted/");return t}catch{throw new Error("Greška kod dohvaćanja informacija jeli korisnik glasao")}},{onError:t=>s.error(String(t)),staleTime:1/0})};export{n as u};

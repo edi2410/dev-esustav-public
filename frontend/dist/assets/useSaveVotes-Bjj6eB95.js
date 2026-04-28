@@ -1,0 +1,1 @@
+import{e as a,o as r,p as n,s as i}from"./index-B89JxAsN.js";const p=()=>{const s=a(),e=r();return n(async o=>{try{return await s.post("eizbori/elections/votes/",o)}catch{throw new Error("Greška prilikom glasanja")}},{onSuccess:()=>{e.invalidateQueries({queryKey:["is_voted_data"]}),i.success("Uspješno si glasao")}})};export{p as u};
